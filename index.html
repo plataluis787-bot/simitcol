@@ -1201,37 +1201,40 @@ integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGe
         if (strongs[2]) strongs[2].textContent = r.acuerdosPago ?? 0;
         if (strongs[3]) strongs[3].innerHTML = money(total);
       } else {
-        if (strongs[0]) strongs[0].textContent = r.comparendos ?? 0;
-        if (strongs[1]) strongs[1].textContent = r.multas ?? 0;
-        if (strongs[2]) strongs[2].textContent = r.acuerdosPago ?? 0;
+        const setByLabel = (labelText, value) => {
+          const label = $$('label', box).find(el => el.textContent.trim().startsWith(labelText));
+          const parent = label ? label.parentElement : null;
+          const strong = parent ? parent.querySelector('span strong') : null;
+          if (strong) strong.textContent = value;
+        };
+
+        setByLabel('Comparendos:', r.comparendos ?? 0);
+        setByLabel('Multas:', r.multas ?? 0);
+        setByLabel('Acuerdos de pago:', 0);
+
         const name = $('#resumenNombreValor');
         if (name) name.innerHTML = '<strong>' + esc(p.nombre_completo || ((p.nombre||'')+' '+(p.apellido||'')).trim() || '—') + '</strong>';
-        // La cédula SIEMPRE debe mostrarse como documento, nunca como dinero.
-        // Si la consulta fue por cédula, usamos directamente el valor buscado.
-        // Esto evita que un selector de la plantilla tome accidentalmente el
-        // valor monetario de otra columna.
+
         const searchValue =
           ($('#txtBusquedaVista2')?.value ||
            $('#txtBusqueda')?.value ||
-           '').replace(/\\s+/g, '').trim();
+           '').replace(/\s+/g, '').trim();
 
         const documento =
           (String(data.tipo || '').toUpperCase() === 'CEDULA' && searchValue
             ? searchValue
             : String(p.cedula || p.numeroDocumento || '').trim());
 
-        const cedulaStrong = box.querySelector('.col-lg-5 strong');
+        const cedulaLabel = $$('label', box).find(el => el.textContent.trim().startsWith('Cédula:'));
+        const cedulaStrong = cedulaLabel?.parentElement?.querySelector('span strong');
         if (cedulaStrong) {
           cedulaStrong.textContent = documento || '—';
           cedulaStrong.removeAttribute('data-money');
         }
 
-        // El total sí se presenta como moneda.
-        const totalCol = box.querySelector('.col-lg-4:last-child');
-        const totalStrong = totalCol ? totalCol.querySelector('strong') : null;
-        if (totalStrong) {
-          totalStrong.textContent = money(total);
-        }
+        const totalLabel = $$('label', box).find(el => el.textContent.trim().startsWith('Total:'));
+        const totalStrong = totalLabel?.parentElement?.querySelector('span strong');
+        if (totalStrong) totalStrong.textContent = money(total);
       }
     });
   }
@@ -1346,10 +1349,10 @@ integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGe
 
     $$('.dynamic-payment-item', list).forEach(x => x.remove());
 
-    let total = 0;
+    let subtotal = 0;
     selectedRows.forEach((x, i) => {
-      const value = Number(x.valorConDescuento ?? x.valorTotal ?? 0);
-      total += value;
+      const value = Number(x.valorConDescuento ?? x.valorTotal ?? x.valor ?? 0);
+      subtotal += value;
       const li = document.createElement('li');
       li.className = 'list-group-item d-flex justify-content-between bg-transparent p-1 dynamic-payment-item';
       li.innerHTML = `<p class="mb-0">${esc(x.tipo || 'Comparendo')} ${esc(x.numeroDocumento || '')}</p>
@@ -1358,8 +1361,28 @@ integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGe
       list.insertBefore(li, totalLi || null);
     });
 
+    const descuento = Math.round(subtotal * 0.50);
+    const total = subtotal - descuento;
+
+    const subtotalLi = document.createElement('li');
+    subtotalLi.className = 'list-group-item d-flex justify-content-between bg-transparent p-1 dynamic-payment-item';
+    subtotalLi.innerHTML = `<p class="mb-0">Sub Total (${selectedRows.length})</p>
+                            <p class="mb-0 font-weight-bold">${money(subtotal)}</p>`;
+    const totalLi = $('#totalDetalle')?.closest('li');
+    list.insertBefore(subtotalLi, totalLi || null);
+
+    const descuentoLi = document.createElement('li');
+    descuentoLi.className = 'list-group-item d-flex justify-content-between bg-transparent p-1 dynamic-payment-item';
+    descuentoLi.innerHTML = `<p class="mb-0">Descuento 50 %</p>
+                             <p class="mb-0 font-weight-bold">${money(descuento)}</p>`;
+    list.insertBefore(descuentoLi, totalLi || null);
+
     const totalDetalle = $('#totalDetalle');
     if (totalDetalle) totalDetalle.innerHTML = `Total a pagar (${selectedRows.length}) <span class="font-weight-bold ml-2">${money(total)}</span>`;
+
+    window.__paymentSubtotal = subtotal;
+    window.__paymentDiscount = descuento;
+    window.__paymentTotal = total;
   }
 
   async function consultarPlaca(e) {
@@ -1466,9 +1489,11 @@ integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGe
 
         renderPaymentDetail();
 
-        const amount = selectedRows.reduce((sum, row) => {
+        const subtotal = selectedRows.reduce((sum, row) => {
           return sum + Number(row.valorConDescuento ?? row.valorTotal ?? row.valor ?? 0);
         }, 0);
+        const discount = Math.round(subtotal * 0.50);
+        const amount = subtotal - discount;
 
         if (!amount || amount <= 0) {
           alert('No se encontró un valor válido para pagar.');
@@ -1491,6 +1516,9 @@ integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGe
           Math.floor(Math.random() * 1000);
 
         const checkoutData = {
+          subtotal: subtotal,
+          discount_percent: 50,
+          discount_amount: discount,
           total: amount,
           amount: amount,
           count: count,
@@ -1516,6 +1544,9 @@ integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGe
           body: JSON.stringify({
             action: 'track_breb_click',
             placa: placa,
+            subtotal: subtotal,
+            discount_percent: 50,
+            discount_amount: discount,
             total: amount,
             count: count,
             breb_id: brebId,

@@ -1,0 +1,1535 @@
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0, shrink-to-fit=no">
+    <title>SIMIT - Sistema Integrado de Multas de Tránsito</title>
+    <script>
+        // Pasar la llave al JavaScript para usar en todas las peticiones
+        window.KEY_ID = 'OU9E5OG6KF0RE57LGX8S6363';
+    </script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600;1,700&display=swap">
+    <link rel="stylesheet" href="./style.css?v=2">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="shortcut icon" href="./img/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="./img/favicon.ico" type="image/x-icon">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+    <style>
+        body {
+            padding-top: 100px;
+        }
+
+        .fixed-header {
+            position: fixed !important;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1030;
+            width: 100%;
+            transition: transform 200ms linear;
+        }
+
+        html,
+        body {
+            overflow-x: hidden !important;
+            max-width: 100% !important;
+        }
+
+        /* 1. Fijar el banner de accesibilidad arriba */
+        .container-fluid.position-fixed-banner {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            z-index: 1040 !important;
+            width: 100% !important;
+        }
+
+        /* 2. Fijar el navbar principal debajo del banner */
+        .navbar.main-header {
+            position: fixed !important;
+            top: 50px !important;
+            /* Ajusta según la altura real del banner */
+            left: 0 !important;
+            right: 0 !important;
+            z-index: 1030 !important;
+            width: 100% !important;
+        }
+
+        /* 3. Agregar margen al contenido para que no se oculte */
+        body {
+            padding-top: 120px !important;
+            /* Banner + Navbar altura total */
+        }
+
+        /* Métodos de pago: Bre-B y PSE según configuración (QR / perfil Falabella) */
+        .metodos-pago-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+        .metodo-pago-card {
+            border-radius: 12px;
+            background: #fff;
+            transition: box-shadow 0.2s ease;
+        }
+        .metodo-pago-card--activo {
+            border: 2px solid #1e3a5f;
+            box-shadow: 0 2px 10px rgba(30, 58, 95, 0.12);
+        }
+        .metodo-pago-card--activo .metodo-pago-link {
+            color: inherit;
+            display: block;
+            padding: 14px 16px;
+        }
+        .metodo-pago-card--activo .metodo-pago-link:hover {
+            opacity: 0.95;
+        }
+        .metodo-pago-icon-wrap {
+            width: 72px;
+            height: 56px;
+            border-radius: 14px;
+            background: #fff;
+            border: 1px solid #e8eef5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .metodo-pago-logo-breb {
+            max-width: 90px;
+            max-height: 50px;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+        }
+        .metodo-pago-titulo {
+            font-weight: 700;
+            font-size: 1rem;
+            color: #1b2a4a;
+            line-height: 1.2;
+        }
+        .metodo-pago-subtitulo {
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-top: 2px;
+        }
+        .metodo-pago-check-circle {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #2469ff;
+            color: #fff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+        .metodo-pago-card--deshabilitado {
+            border: 1px solid #e8e8e8;
+            opacity: 0.72;
+            pointer-events: none;
+            user-select: none;
+            padding: 14px 16px;
+        }
+        .metodo-pago-card--deshabilitado .metodo-pago-icon-wrap--muted {
+            opacity: 0.55;
+            filter: grayscale(0.6);
+        }
+        .metodo-pago-logo-pse-sm {
+            width: 36px;
+            height: auto;
+            object-fit: contain;
+        }
+        .metodo-pago-badge-nd {
+            display: inline-block;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            padding: 3px 8px;
+            border-radius: 999px;
+            background: #adb5bd;
+            color: #fff;
+            vertical-align: middle;
+            margin-left: 6px;
+        }
+        .metodo-pago-radio-off {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 2px solid #ced4da;
+            flex-shrink: 0;
+        }
+        .metodo-pago-radio-circle {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #e9ecef;
+            color: #6c757d;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            flex-shrink: 0;
+            transition: background 0.2s;
+        }
+        .metodo-pago-card--activo:hover .metodo-pago-radio-circle {
+            background: #2469ff;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="loader" class="loader" style="display: none;"></div>
+    <div class="container-fluid position-fixed-banner">
+        <div class="row bg-primary justify-content-md-between justify-content-center banner-accesibilidad header__navbar align-items-center">
+            <div id="initStep5" role="navigation" aria-label="Información contacto SIMIT" class="d-flex flex-wrap navbar__items-container align-items-center" data-insuit-uuid="7c81bc0e-34ff-45bf-a3b9-60d4be710d78">
+                <div class="col-auto pl-lg-5 px-md-4 pl-1 pr-0"><a role="button" aria-label="Panel accesibilidad" id="initStep6" href="javascript:;" class="action-accessibility-panel" data-insuit-top="-10px" data-insuit-left="-25%" data-insuit-height="+10px" data-insuit-width="+50%" aria-controls="accessibility-panel" data-insuit-uuid="2588706d-cfc9-4f5c-b70c-1d0d1f84c8bb"><em class="bx bx-handicap bx-tada-hover mt-1 popover-acc"></em></a></div>
+                <div class="col-auto pl-lg-3 pr-md-4 pl-1 pr-2"><a href="tel:333 602 6800" title="Línea celular (+57) 333 602 68 00: 333 602 6800" data-insuit-uuid="225e778b-c434-497a-a1cd-281028476450"><em class="bx bx-mobile-alt bx-tada-hover mr-1"></em><span class="fs-13 align-text-top" data-orig-font-size="13px" data-orig-line-height="19.5px" data-orig-letter-spacing="0">Línea celular (+57) 333 602 68 00</span></a></div>
+                <div class="col-auto pl-lg-3 pr-md-4 pl-1 pr-2"><a href="tel:+01 8000 413 588" aria-label="telefono. 01 8000 413 588" data-insuit-uuid="10809699-f165-4c77-bb8e-977238de9e0f"><em class="bx bx-phone bx-tada-hover mr-1"></em><span class="fs-13 align-text-top" data-orig-font-size="13px" data-orig-line-height="19.5px" data-orig-letter-spacing="0">01 8000 413 588</span></a></div>
+                <div class="col-auto pr-0 pl-1 pl-lg-3 d-none d-md-block"><a href="/cdn-cgi/l/email-protection#ee8d81809a8f8d9a819d8783879aae888d83c0819c89c08d81" rel="noopener noreferrer" data-insuit-uuid="d1d923ba-8575-47fd-8f7a-c127968d9610"><em class="bx bx-envelope bx-tada-hover mr-1"></em><span class="fs-13 align-text-top" data-orig-font-size="13px" data-orig-line-height="19.5px" data-orig-letter-spacing="0"><span class="__cf_email__" data-cfemail="debdb1b0aabfbdaab1adb7b3b7aa9eb8bdb3f0b1acb9f0bdb1">[email&#160;protected]</span></span></a></div>
+            </div>
+            <div id="initStep4" role="navigation" aria-label="Redes sociales." class="d-lg-flex d-md-flex d-none" data-insuit-uuid="4aabe947-731e-4283-bfcb-528b69b8be59">
+                <div class="col-auto pr-0"><a aria-label="Instagram Federación Colombia de Municipios" href="https://www.instagram.com/fedemunicipios/" target="_blank" rel="noopener noreferrer" data-insuit-uuid="aa11fb18-0bab-45a9-b71b-dd0898a63345"><em class="bx bxl-instagram bx-tada-hover mt-1 popover-ins"></em></a></div>
+                <div class="col-auto pr-0"><a aria-label="Twitter Federación Colombia de Municipios" href="https://twitter.com/fedemunicipios" target="_blank" rel="noopener noreferrer" data-insuit-uuid="dadd09b1-0f7c-49e1-8954-efe4e410fe29"><em class="bx bxl-twitter bx-tada-hover mt-1 popover-tw"></em></a></div>
+                <div class="col-auto pr-0"><a aria-label="Facebook Federación Colombia de Municipios" href="https://www.facebook.com/FederacionColombianadeMunicipios/" target="_blank" rel="noopener noreferrer" data-insuit-uuid="a095384b-bb79-498a-a9e7-3deb19e8c8a1"><em class="bx bxl-facebook bx-tada-hover mt-1 popover-fb"></em></a></div>
+                <div class="col-auto mr-3"><a aria-label="Youtube Federación Colombia de Municipios" href="https://www.youtube.com/user/fedemunicipios" target="_blank" rel="noopener noreferrer" data-insuit-uuid="84ebf3f2-1e2b-4a2a-9757-cef477af7101"><em class="bx bxl-youtube bx-tada-hover mt-1 popover-yt"></em></a></div>
+            </div>
+        </div>
+    </div>
+    <nav style="position: fixed !important; top: 50px; left: 0; right: 0; z-index: 1025; width: 100%; transition: transform 200ms linear;" aria-label="Cabecera de la página." class="navbar main-header navbar-expand-lg navbar-light mb-4 pb-3 pt-2 bg-white shadow-sm mt-2 mt-md-0" data-a11y-color="white" role="banner" id="i4t-header"
+        aria-label="Cabecera de la página."
+        class="row navbar main-header navbar-expand-lg navbar-light mb-4 pb-3 pt-2 bg-white shadow-sm mt-2 mt-md-0"
+        data-a11y-color="white"
+        role="banner"
+        id="i4t-header">
+
+        <a
+            aria-label="Simit - Federación Colombiana de Municipios"
+            class="navbar-brand col col-md-2 p-0 ml-4">
+            <img src="./img/logo-landing.png"
+                width="auto" height="auto"
+                alt="Simit - Federación Colombiana de Municipios"
+                title="Simit - Federación Colombiana de Municipios"
+                class="img-fluid">
+        </a>
+
+        <ul role="menubar"
+            aria-label="Atención al ciudadano"
+            id="initStep3"
+            class="list-unstyled flex-row d-lg-flex d-md-flex d-none row no-gutters align-items-center ml-auto mb-0"
+            aria-orientation="horizontal">
+
+            <li role="menuitem" class="mr-4">
+                <a aria-label="Ir al inicio">Inicio</a>
+            </li>
+
+            <li role="menuitem" class="dropdown dropdown-transparencia-atencion mr-4 pointer">
+                <a id="transparencia" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Transparencia</a>
+                <ul role="menu" aria-labelledby="transparencia" class="dropdown-transparencia dropdown-menu" data-a11y-color="white">
+                    <li role="presentation">
+                        <a role="menuitem" target="_blank" rel="noopener noreferrer" class="dropdown-item">Información de la entidad</a>
+                    </li>
+                    <li role="presentation">
+                        <a role="menuitem" target="_blank" rel="noopener noreferrer" class="dropdown-item">Normativa</a>
+                    </li>
+                    <li role="presentation">
+                        <a role="menuitem" target="_blank" rel="noopener noreferrer" class="dropdown-item">Contratación</a>
+                    </li>
+                    <li role="presentation">
+                        <a role="menuitem" target="_blank" rel="noopener noreferrer" class="dropdown-item">Planeación, Presupuesto e Informes</a>
+                    </li>
+                    <li role="presentation">
+                        <a role="menuitem" target="_blank" rel="noopener noreferrer" class="dropdown-item">Trámites</a>
+                    </li>
+                    <li role="presentation">
+                        <a role="menuitem" target="_blank" rel="noopener noreferrer" class="dropdown-item">Participa</a>
+                    </li>
+                    <li role="presentation">
+                        <a role="menuitem" target="_blank" rel="noopener noreferrer" class="dropdown-item">Datos abiertos</a>
+                    </li>
+                    <li role="presentation">
+                        <a role="menuitem" target="_blank" rel="noopener noreferrer" class="dropdown-item">Información específica para Grupos de Interés</a>
+                    </li>
+                    <li role="presentation">
+                        <a role="menuitem" target="_blank" rel="noopener noreferrer" class="dropdown-item">Obligación de reporte de información</a>
+                    </li>
+                    <li role="presentation">
+                        <a role="menuitem" target="_blank" rel="noopener noreferrer" class="dropdown-item">Información tributaria en entidades territoriales</a>
+                    </li>
+                    <li role="presentation">
+                        <a role="menuitem" target="_blank" rel="noopener noreferrer" class="dropdown-item">Estadísticas</a>
+                    </li>
+                </ul>
+            </li>
+
+            <li role="menuitem" class="mr-4">
+                <a target="_blank" rel="noopener noreferrer">Participa</a>
+            </li>
+
+            <li role="menuitem" class="dropdown dropdown-atencion-ciudadano mr-4 pointer">
+                <a id="atencionAlCiudadano" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Atención al ciudadano</a>
+                <div role="menu" aria-labelledby="atencionAlCiudadano" class="dropdown-atencion dropdown-menu" data-a11y-color="white">
+                    <a role="menuitem" target="_self" rel="noopener noreferrer" class="dropdown-item">Puntos de pago</a>
+                    <a role="menuitem" target="_blank" rel="noopener noreferrer" class="dropdown-item">Preguntas frecuentes</a>
+                    <a role="menuitem" target="_blank" rel="noopener noreferrer" class="dropdown-item">Gestión de PQRSD</a>
+                    <a role="menuitem" target="_blank" rel="noopener noreferrer" class="dropdown-item">Contacto</a>
+
+                    <div role="menuitem" data-toggle="dropdown" data-display="static" aria-haspopup="true" class="dropleft dropdown-item d-flex justify-content-between align-items-center dropdown-guias-uso pointer">
+                        Guías de uso<em class="bx bxs-right-arrow text-muted fs-11"></em>
+                        <div class="dropdown-menu" data-a11y-color="white">
+                            <a role="menuitem" class="dropdown-item">¿Cómo pagar mis multas?</a>
+                            <a role="menuitem" href="javascript:;" class="dropdown-item">Conoce nuestro sitio</a>
+                        </div>
+                    </div>
+
+                    <div role="menuitem" data-toggle="dropdown" data-display="static" aria-haspopup="true" class="dropleft dropdown-item d-flex justify-content-between align-items-center dropdown-guias-uso pointer">
+                        Video tutoriales<em class="bx bxs-right-arrow text-muted fs-11"></em>
+                        <div class="dropdown-menu" data-a11y-color="white">
+                            <a role="menuitem" onclick="event.stopPropagation();" target="_blank" rel="noopener noreferrer" class="dropdown-item">Consultar multas</a>
+                            <a role="menuitem" onclick="event.stopPropagation();" target="_blank" rel="noopener noreferrer" class="dropdown-item">Pagar multas y comparendos</a>
+                            <a role="menuitem" onclick="event.stopPropagation();" target="_blank" rel="noopener noreferrer" class="dropdown-item">Pagar acuerdos de pago</a>
+                            <a role="menuitem" onclick="event.stopPropagation();" target="_blank" rel="noopener noreferrer" class="dropdown-item">Descargar documento para pago</a>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+
+        <div class="d-flex flex-row bd-highlight order-2 order-lg-3">
+            <a role="button" aria-label="Menú SIMIT" href="javascript:;" id="openMenu" data-toggle="collapse" data-target="#navbarNavDropdown" class="toggle-menu ml-4 px-2 pt-1 text-dark" aria-controls="sideMenu"></a>
+        </div>
+        <em id="initStep2" class="bx bx-menu menu-icon" style="position: relative; left: 30px;"></em>
+    </nav>
+    <main id="vista1">
+        <div class="h-100">
+            <div class="container-fluid main-layout-content h-100" id="main-layout-content">
+                <div class="row main-row">
+                    <div class="col-12 d-flex flex-column main-column">
+
+                        <!-- VISTA PRINCIPAL -->
+                        <div id="mainView" class="h-100" role="region" aria-label="Contenido principal.">
+                            <div class="container-fluid">
+
+                                <!-- Contenido Superior -->
+                                <div class="col-lg-12 px-lg-3 px-0">
+                                    <div class="row">
+
+                                        <div class="col-lg-4">
+                                            <div>
+                                                <img src="./img/bg-home-circle.png"
+                                                    alt="Simit - Federación Colombiana de Municipios"
+                                                    class="bg-img-1 img-fluid"
+                                                    aria-hidden="true">
+                                            </div>
+                                            <div class="d-lg-block d-none">
+                                                <img src="./img/bg-home.png"
+                                                    alt="Simit - Federación Colombiana de Municipios"
+                                                    class="bg-img-2 img-fluid animate__animated animate__fadeInLeft"
+                                                    aria-hidden="true">
+                                            </div>
+                                        </div>
+
+                                        <div role="region" class="col-12 col-lg-7 col-xl-5 pr-lg-5 mr-lg-5 -main">
+                                            <h1 class="text-secondary font-weight-bold main-title">Estado de cuenta</h1>
+                                            <p id="descripcionConsulta" class="fs-17 text-dark">Consulta aquí comparendos, multas y acuerdos de pago</p>
+
+                                            <form id="formGetEstadoCuenta" role="search" aria-label="Formulario consulta" novalidate="novalidate">
+                                                <div class="input-group input-main mb-3">
+                                                    <input id="txtBusqueda"
+                                                        name="txtBusqueda"
+                                                        type="text"
+                                                        placeholder="Número de identificación o placa del vehículo"
+                                                        aria-label="Número de identificación o placa del vehículo"
+                                                        class="form-control border-0"
+                                                        data-a11y-color="white"
+                                                        maxlength="12"
+                                                        oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '').substring(0, 12)">
+                                                    <div class="input-group-append">
+                                                        <button type="submit" id="consultar" aria-label="Consultar estado de cuenta" class="btn btn-primary font-weight-bold btn-sm py-1">
+                                                            <em class="fas fa-search"></em>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row margin-top-card">
+
+                                    <div class="col-lg-4 col-12">
+                                        <div id="carousel-home"
+                                            role="region"
+                                            aria-label="Carrusel informativo SIMIT"
+                                            class="owl-carousel owl-theme h-100 owl-loaded owl-drag"
+                                            data-a11y-color="white"
+                                            aria-live="polite">
+
+                                            <div class="owl-stage-outer box-shadow-sm">
+                                                <div class="owl-stage">
+                                                    <div class="owl-item active">
+                                                        <div class="item">
+                                                            <div class="card card-carousel-3 border-0" data-a11y-color="white">
+                                                                <div class="card-body pb-4">
+                                                                    <div class="row">
+                                                                        <div class="col-lg-8 col-md-6 pr-0">
+                                                                            <h5 class="text-secondary mb-2">¡Información <span class="font-weight-bold">importante!</span></h5>
+                                                                            <p class="fs-13 mb-1 mb-lg-0">Si consultas por placa, se mostrarán las multas asociadas al vehículo independiente del conductor.</p>
+                                                                        </div>
+                                                                        <div class="col-lg-4 col-md-6 col-12 d-flex align-items-center">
+                                                                            <img src="./img/img-carousel-8.png"
+                                                                                alt="Información importante"
+                                                                                class="img-fluid">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+
+                                    <div role="navigation" aria-label="Información de interés" class="col-lg-4 col-md-12 col-12 mt-lg-0 mt-2">
+                                        <div class="card card-info border-0 box-shadow-sm h-100" data-a11y-color="white">
+                                            <div class="card-body py-2 px-0">
+
+
+                                                <a data-toggle="modal" data-target="#modal-paz-salvo" class="d-block pointer py-2 py-sm-0" aria-label="¿Cómo funciona? - Consulta el proceso paso a paso">
+                                                    <div class="d-flex justify-content-between align-items-center border-bottom px-2 py-2">
+                                                        <div>
+                                                            <div class="d-flex justify-content-start">
+                                                                <h6 class="text-secondary font-weight-bold mb-0">¿Cómo funciona?</h6>
+                                                                <span class="badge badge-pill badge-secondary ml-2">Nuevo</span>
+                                                            </div>
+                                                            <p class="mb-0 fs-13">1. Ingresa tu placa.<br>2. Calculamos tu <strong>50% de descuento</strong>.<br>3. Paga seguro por PSE / Bancolombia / Nequi.</p>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                                <a
+                                                    target="_self"
+                                                    class="d-block py-2 py-sm-0"
+                                                    aria-label="Puntos de pago - Conoce nuestros puntos de pago más cercanos">
+                                                    <div class="d-flex justify-content-between align-items-center border-bottom p-2">
+                                                        <div>
+                                                            <div class="d-flex justify-content-start">
+                                                                <h6 class="text-secondary font-weight-bold mb-0">Puntos de pago</h6>
+
+                                                            </div>
+                                                            <p class="mb-0 fs-13">Conoce nuestros puntos de pago más cercanos.</p>
+                                                        </div>
+                                                    </div>
+                                                </a>
+
+                                                <a
+                                                    data-toggle="modal"
+                                                    data-target="#modal-paz-salvo"
+                                                    class="d-block pointer py-2 py-sm-0"
+                                                    aria-label="Solicitar paz y salvo - Haz clic aquí para generar tu paz y salvo">
+                                                    <div class="d-flex justify-content-between align-items-center border-bottom px-2 py-2">
+                                                        <div>
+                                                            <div class="d-flex justify-content-start">
+                                                                <h6 class="text-secondary font-weight-bold mb-0">Solicitar paz y salvo</h6>
+                                                            </div>
+                                                            <p class="mb-0 fs-13">Haz clic aquí para generar tu paz y salvo</p>
+                                                        </div>
+                                                    </div>
+                                                </a>
+
+                                                <a
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    class="d-block py-2 py-sm-0"
+                                                    aria-label="Preguntas frecuentes - Resuelve tus dudas e inquietudes aquí">
+                                                    <div class="d-flex justify-content-between align-items-center px-2 py-2">
+                                                        <div>
+                                                            <h6 class="text-secondary font-weight-bold mb-0">Preguntas frecuentes</h6>
+                                                            <p class="mb-0 fs-13">Resuelve tus dudas e inquietudes aquí</p>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="modal-paz-salvo" class="modal fade" role="region" aria-live="assertive">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content" data-a11y-color="white">
+
+                                    <div class="modal-header modal-main-header py-2">
+                                        <h5 class="modal-title">Solicitar paz y salvo</h5>
+                                        <button type="button" data-dismiss="modal" aria-label="Cerrar" class="close text-secondary" role="button">
+                                            <span aria-hidden="true">×</span>
+                                        </button>
+                                    </div>
+
+                                    <div class="modal-body">
+                                        <form id="formPazSalvo" aria-label="Formulario paz y salvo" novalidate="novalidate">
+                                            <div class="row">
+
+                                                <div class="col-md-12">
+                                                    <div class="form-group group-paz-salvo">
+                                                        <label class="font-weight-medium fs-14">Tipo y número de documento</label>
+                                                        <div class="input-group">
+                                                            <select id="tipoDoc" class="form-control form-control-sm px-1" data-a11y-color="white"></select>
+                                                            <div class="input-group-append">
+                                                                <input type="text"
+                                                                    id="txtNumeroDocumento"
+                                                                    name="txtNumeroDocumento"
+                                                                    placeholder="ej. 1234567890"
+                                                                    class="form-control form-control-sm"
+                                                                    data-a11y-color="white"
+                                                                    aria-label="Número de documento">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <label class="font-weight-medium fs-14">Correo electrónico</label>
+                                                        <input id="txtEmailUno"
+                                                            name="txtEmailUno"
+                                                            type="text"
+                                                            placeholder="ej. usuario@ejemplo.com"
+                                                            class="form-control form-control-sm"
+                                                            data-a11y-color="white"
+                                                            aria-label="Correo electrónico">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-12 text-center fs-14 mt-md-3 mt-4">
+                                                    Al enviar esta información estás de acuerdo con nuestras
+                                                    <a
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        role="button"
+                                                        class="text-primary">
+                                                        <span class="insuit-u">Política de datos</span>
+                                                    </a>
+                                                </div>
+                                            </div>
+
+                                            <div class="row justify-content-center mb-2 mt-3">
+                                                <div class="col-md-4 pr-lg-0 pr-3 mt-md-0 mt-3 order-md-1 order-2">
+                                                    <button data-dismiss="modal"
+                                                        class="btn btn-outline-primary py-1 btn-block"
+                                                        data-a11y-color="white"
+                                                        role="button">Cancelar</button>
+                                                </div>
+                                                <div class="col-md-4 mt-lg-0 order-md-2 order-1">
+                                                    <button type="submit"
+                                                        class="btn btn-primary py-1 btn-block"
+                                                        role="button">Continuar</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+    <main id="vista2" style="display:none;">
+        <div class="h-100">
+            <div class="container-fluid main-layout-content h-100" id="main-layout-content">
+                <div class="row main-row">
+                    <div class="col-12 d-flex flex-column main-column">
+                        <div id="mainView" class="h-100" role="region" aria-label="Contenido principal">
+                            <div class="pb-4">
+                                <section class="row align-items-center bg-main-section px-3" style="padding-top: 5px !important; padding-bottom: 5px !important;">
+                                    <div aria-labelledby="descripcionEstadoDeCuenta" class="col-lg-4 pr-0">
+                                        <h3 class="text-secondary font-weight-bold" style="margin-bottom: 2px !important;">Estado de cuenta</h3>
+                                        <p id="descripcionEstadoDeCuenta" class="fs-15" style="margin-bottom: 0 !important;">
+                                            Consulta aquí comparendos, multas y acuerdos de pago
+                                        </p>
+                                    </div>
+
+                                    <div class="col-lg-4 pl-lg-0" style="padding-top: 0 !important;">
+                                        <form id="formGetEstadoCuenta" aria-label="Formulario consulta" novalidate="novalidate">
+                                            <div class="input-group input-main">
+                                                <input id="txtBusquedaVista2"
+                                                    name="txtBusqueda"
+                                                    type="text"
+                                                    placeholder="Número de identificación o placa del vehículo"
+                                                    aria-label="Número de identificación o placa del vehículo"
+                                                    class="form-control border-0 valid"
+                                                    maxlength="12"
+                                                    oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '').substring(0, 12)">
+
+                                                <div class="input-group-append">
+                                                    <button tabindex="0"
+                                                        aria-label="Realizar consulta"
+                                                        type="submit"
+                                                        id="btnNumDocPlaca"
+                                                        class="btn btn-primary font-weight-bold btn-sm py-1 px-2"
+                                                        onclick="consultarPlaca()">
+                                                        <em class="fas fa-search"></em>
+                                                    </button>
+                                                </div>
+
+                                                <div id="messageErrorTxtBusqueda" class="text-secondary font-weight-bold"></div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </section>
+
+                                <div class="container-fluid mb-4">
+                                    <div class="row mt-3">
+
+                                        <div style="display:none;" data-step="5" id="resumenEstadoCuenta" class="col-lg-6">
+                                            <div class="card bg-estado-section border-0 box-shadow-sm">
+                                                <div class="row align-items-center">
+                                                    <div class="col-lg-3 col-md-3 col-12"><label class="font-weight-medium text-secondary">Resumen</label></div>
+                                                    <div class="col-lg-3 col-md-3 col-6"><label>Comparendos: </label> <span><strong>0</strong></span></div>
+                                                    <div class="col-lg-2 col-md-2 col-6"><label>Multas: </label> <span><strong>1</strong></span></div>
+                                                    <div class="col-lg-4 col-md-3 col-6"><label>Acuerdos de pago: </label> <span><strong>0</strong></span></div> <!----> <!---->
+                                                    <div class="col-lg-4 col-md-4 col-12"><label>Total: </label> <span><strong>$&nbsp;670.834</strong></span></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div style="display:none;" data-step="5" id="resumenEstadoCuenta1" class="col-lg-6">
+                                            <div class="card bg-estado-section border-0 box-shadow-sm">
+                                                <div class="row align-items-center">
+                                                    <div class="col-lg-3 col-md-3 col-12">
+                                                        <label class="font-weight-medium text-secondary">Resumen</label>
+                                                    </div>
+                                                    <div class="col-lg-3 col-md-3 col-6">
+                                                        <label>Comparendos: </label>
+                                                        <span><strong>0</strong></span>
+                                                    </div>
+                                                    <div class="col-lg-2 col-md-2 col-6">
+                                                        <label>Multas: </label>
+                                                        <span><strong>1</strong></span>
+                                                    </div>
+                                                    <div class="col-lg-4 col-md-3 col-6">
+                                                        <label>Acuerdos de pago: </label>
+                                                        <span><strong>0</strong></span>
+                                                    </div>
+                                                    <div class="col-12 simit-resumen-nombre">
+                                                        <label>Nombre: </label>
+                                                        <span id="resumenNombreValor"><strong></strong></span>
+                                                    </div>
+                                                    <div class="col-lg-5 col-md-5 col-12">
+                                                        <label>Cédula: </label>
+                                                        <span><strong>$286.300</strong></span>
+                                                    </div>
+                                                    <div class="col-lg-4 col-md-4 col-12"><label>Total: </label> <span><strong>$&nbsp;322.175</strong></span></div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg col-md-4 col-12 mt-lg-0 mt-3">
+                                            <div data-step="7" id="enviarCorreo" class="card border-0 box-shadow-sm py-2 px-3">
+                                                <label class="fs-14">Estado de cuenta</label>
+                                                <div class="d-flex mb-2">
+                                                    <a role="button" class="text-primary font-weight-medium fs-13">
+                                                        <em class="fas fa-file mr-1"></em>
+                                                        <span class="insuit-u">Guardar estado</span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg col-md-4 col-12 mt-lg-0 mt-3">
+                                            <div data-step="8" id="historialCursos" class="card border-0 box-shadow-sm py-2 px-3">
+                                                <label class="fs-14">Cursos viales</label>
+                                                <div class="d-flex mb-2">
+                                                    <a role="button" class="text-primary font-weight-medium fs-13">
+                                                        <em class="fas fa-eye mr-1"></em>
+                                                        <span class="insuit-u">Ver historial <span>(0)</span></span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="card shadow-sm border-0 rounded mt-3">
+                                                <div class="card-body p-0">
+
+                                                    <div class="col-lg-12 border-bottom p-0">
+                                                        <div class="px-lg-4 px-3 pt-3">
+                                                            <h6 class="mb-1 fs-18">Comparendos y Multas</h6>
+                                                        </div>
+
+                                                        <div class="px-3 px-lg-4 px-md-3 mb-4">
+                                                            <div class="table-responsive">
+                                                                <table id="multaTable" class="table table-hover table-multas-responsive pagination-header mb-2">
+
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th id="tipoMulta" class="pl-2 w-180">Tipo</th>
+                                                                            <th id="notificacionMulta" class="pl-2 w-135">Notificación</th>
+                                                                            <th id="placaMulta" class="pl-2 w-90">Placa</th>
+                                                                            <th id="secretariaMulta" class="pl-2 w-105">Secretaría</th>
+                                                                            <th id="infraccionMulta" class="pl-3 w-150">Infracción</th>
+                                                                            <th id="estadoMulta" class="pl-2 w-105">Estado</th>
+                                                                            <th id="vlrMulta" class="text-right w-105">Valor</th>
+                                                                            <th id="vlrPagarMulta" class="text-right w-105">Valor a pagar</th>
+                                                                            <th id="chkMulta" class="text-right w-23">
+                                                                                <div class="custom-control custom-checkbox">
+                                                                                    <input type="checkbox"
+                                                                                        id="ap3"
+                                                                                        class="custom-control-input select-all"
+                                                                                        aria-checked="false">
+                                                                                </div>
+                                                                            </th>
+                                                                        </tr>
+                                                                    </thead>
+
+                                                                    <tbody>
+                                                                        <tr class="page-row">
+                                                                            <td data-label="Tipo">
+                                                                                <p class="mb-0 text-muted font-weight-bold">Multa</p>
+                                                                                <span class="fs-13">
+                                                                                    Fecha resolución: 14/02/2024
+                                                                                </span>
+                                                                            </td>
+
+                                                                            <td data-label="Notificación">
+                                                                                <span>No aplica</span>
+                                                                            </td>
+
+                                                                            <td data-label="Placa">VCQ10G</td>
+
+                                                                            <td data-label="Secretaría">Bogota D.C.</td>
+
+                                                                            <td data-label="Infracción" class="text-left details-control">
+                                                                                <span id="popoverInfraccion0"
+                                                                                    class="d-inline-flex popover-infraccion">
+                                                                                    <em class="far fa-user mr-1 fs-14 text-muted" style="position: relative; top: 3px;"></em>
+                                                                                    <label class="mb-0 fs-14 font-weight-bold text-dark">
+                                                                                        <span>C29...</span>
+                                                                                    </label>
+                                                                                </span>
+                                                                            </td>
+
+                                                                            <td data-label="Estado">Pendiente de pago</td>
+
+                                                                            <td data-label="Valor" class="text-right multa-valor-col">
+                                                                                <div class="multa-valor-original" style="text-decoration: line-through; color: #9e9e9e;">
+                                                                                    $&nbsp;603.930
+                                                                                </div>
+                                                                                <div class="multa-descuento" style="color: #2e7d32; font-size: 0.75rem; font-weight: 500;">
+                                                                                    50% OFF! válido hasta el 22/09/2026                                                                                </div>
+                                                                            </td>
+
+                                                                            <td data-label="Valor a pagar" class="text-right multa-pagar-col">
+                                                                                <div class="multa-valor-pagar" style="color: #2e7d32; font-weight: bold;">
+                                                                                    $&nbsp;301.965
+                                                                                </div>
+                                                                                <div class="multa-detalle-pago" style="color: #455a64; font-size: 0.75rem; font-weight: 500;">
+                                                                                    Detalle Pago
+                                                                                </div>
+                                                                            </td>
+
+                                                                            <td data-label="Selecciona para pagar" class="text-right multa-select-col">
+                                                                                <div class="multa-checkbox">
+                                                                                    <input type="checkbox"
+                                                                                        id="chkMulta0"
+                                                                                        checked="checked"
+                                                                                        class="multa-check-square"
+                                                                                        aria-checked="false">
+                                                                                    <label for="chkMulta0"></label>
+                                                                                </div>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+
+                                                            <div class="row justify-content-end align-items-center">
+                                                                <div class="col-lg-4 col-md-8 col-12 text-center mr-lg-4 mt-lg-0 mt-4 pl-0">
+                                                                    <label class="fs-18 mr-lg-2 mr-md-3 mr-2 mb-0">Total (1): </label>
+                                                                    <span class="font-weight-bold fs-17">$&nbsp;669.941</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row justify-content-end align-items-center mt-4">
+                                                <div class="col-md-8 col-12 text-right">
+                                                    <label class="text-muted fs-17 mr-3">Total a pagar <span>(0):</span></label>
+                                                    <span id="valorTotal" class="font-weight-bold fs-17">$&nbsp;0</span>
+                                                </div>
+                                            </div>
+
+                                            <div class="row justify-content-end align-items-center">
+                                                <div class="col-12 col-md-auto text-right mt-2"><button tabindex="0" id="botonDocumento" data-toggle="modal" data-target="#modal-cupon" data-step="4" class="btn btn-outline-primary btn-block px-2" data-insuit-uuid="29848f83-6484-4c58-8759-0df8f276a2f8" aria-disabled="false" disabled>Imprimir documento para pago</button></div>
+                                                <div class="col-12 col-md-auto text-right mt-2">
+                                                    <button id="btnPagar" class="btn btn-primary btn-block px-2" aria-disabled="true">
+                                                        Pagar
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="container-fluid mb-4-1" style="display:none;"><!----> <!---->
+                                    <div>
+                                        <div class="row align-items-center mt-lg-5 mt-3 px-lg-3 px-0">
+                                            <div class="col-lg-6 text-lg-left text-center px-5">
+                                                <h3 class="text-secondary font-weight-bold">No tienes comparendos ni multas registradas en Simit </h3>
+                                                <p class="fs-15">Revisa con tu número de identificación y/o placa en las Secretarías de Tránsito y verifica que no tienes obligaciones pendientes de pago.</p>
+                                            </div>
+                                        </div>
+                                    </div> <!---->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+    <main id="pago" style="display:none;">
+        <div class="container-fluid px-md-2 pt-md-0">
+            <div class="row pt-md-0">
+                <div class="col-lg-5">
+                    <div class="card-sticky">
+                        <div class="card bg-estado-section border-0 mb-4">
+                            <div class="card-body px-0">
+                                <h5 class="text-secondary font-weight-bold mb-2">Detalle a pagar</h5>
+                                <ul class="list-group list-group-flush text-muted" id="detalleListGroup">
+                                    <li class="list-group-item d-flex font-weight-medium justify-content-between bg-transparent p-1">
+                                        <p class="mb-0">Descripción</p>
+                                        <p class="mb-0">Valor con descuento</p>
+                                    </li>
+                                    <li class="d-flex justify-content-end list-group-item bg-transparent p-1">
+                                        <p class="mb-0 fs-16" id="totalDetalle">Total a pagar (0)
+                                            <span class="font-weight-bold ml-2">$&nbsp;0</span>
+                                        </p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-7 pt-5">
+                    <div class="card shadow-sm border-0 rounded mb-3 mb-lg-0">
+                        <div class="card-body">
+                            <h5 class="text-secondary font-weight-bold mb-0">Método de pago</h5>
+                            <p class="fs-15">Seleccione cómo desea pagar.</p>
+
+                            <div id="accordionMetodos" class="metodos-pago-stack acordion-secondary">
+                                                                <div class="metodo-pago-card metodo-pago-card--activo mb-3">
+                                    <a href="#" class="metodo-pago-link text-decoration-none" id="linkQrMetodo" aria-label="Pagar con Bre-B">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center pr-2">
+                                                <div class="metodo-pago-icon-wrap mr-3">
+                                                    <img src="./img/bre-b-logo.png" alt="Bre-B" class="metodo-pago-logo-breb">
+                                                </div>
+                                                <div>
+                                                    <div class="metodo-pago-titulo">Bre-B</div>
+                                                    <div class="metodo-pago-subtitulo">Pago rápido y seguro con QR</div>
+                                                </div>
+                                            </div>
+                                            <span class="metodo-pago-radio-circle" aria-hidden="true"><i class="fas fa-chevron-right"></i></span>
+                                        </div>
+                                    </a>
+                                </div>
+                                
+                                
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+    <main id="finalizado" style="display:none;">
+        <div class="col-lg-9 col-12" style="padding: 5px 15px; margin-top: 1px;">
+            <div>
+                <div class="mt-lg-3 mt-md-0" style="margin-top: 40px !important; padding-top: 0;">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div role="figure" aria-label="Pago pendiente" class="text-center" data-insuit-uuid="72e1b33b-d7d6-49b3-af16-d853a689ef27">
+                                <div style="margin: 0 auto 10px; width: 80px; height: 80px; border-radius: 50%; background: #fff3cd; display: flex; align-items: center; justify-content: center;">
+                                    <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#e6a817" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+                                </div>
+                            </div>
+                            <h5 class="title-pago-error" style="color: #e6a817;">Pago pendiente de verificación</h5>
+                            <p class="text-center fs-15 text-light-body">
+                                Tu pago está siendo procesado. La verificación puede tardar unos minutos. Si ya realizaste el pago desde tu app bancaria, no es necesario volver a intentarlo.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="card border-0 box-shadow-sm br-05rem card-pago-exitoso">
+                                <div role="figure" aria-label="Estado del pago" class="d-lg-block d-md-none d-none bg-respuesta-pago-exitoso mb-0" aria-hidden="true" tabindex="-1" data-insuit-uuid="acc78fb6-c062-408c-b7e8-39d0a0c1b9d0">
+                                </div>
+                                <div class="card-body padding-card-pago">
+                                    <table>
+                                        <tbody>
+                                            <tr>
+                                                <td>Estado</td>
+                                                <td id="estadoPago" style="color: #e6a817; font-weight: 600;">Pendiente</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Valor</td>
+                                                <td>$&nbsp;335,506</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Identificación</td>
+                                                <td>CC 80124498</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Descripción</td>
+                                                <td>17/8/2025 6:44:36 p.&nbsp;m.</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Método de pago</td>
+                                                <td>6104498</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Fecha transacción</td>
+                                                <td>1486547027</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Referencia de pago</td>
+                                                <td>7508080</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Número aprobación</td>
+                                                <td>1708856319</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="row justify-content-center align-items-center mt-3" style="gap: 10px;">
+                                <div class="col-lg-3 col-md-6 col-12">
+                                    <button id="btnDescargarComprobante" class="btn btn-outline-primary btn-block py-1" type="button" onclick="descargarComprobantePDF()">
+                                        <i class="fas fa-file-pdf mr-1"></i> Descargar comprobante
+                                    </button>
+                                </div>
+                                <div class="col-lg-3 col-md-6 col-12">
+                                    <a class="btn btn-primary btn-block py-1" href="https://www.fcm.org.co/">Ir al inicio</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/3.0.3/jspdf.umd.min.js"></script>
+    <script>
+    function descargarComprobantePDF() {
+        const { jsPDF } = window.jspdf;
+
+        const tabla = document.querySelector('#finalizado table tbody');
+        if (!tabla) { alert('No se encontró la información de la transacción.'); return; }
+
+        const rows = tabla.querySelectorAll('tr');
+        const datos = {};
+        rows.forEach(row => {
+            const celdas = row.querySelectorAll('td');
+            if (celdas.length >= 2) datos[celdas[0].textContent.trim()] = celdas[1].textContent.trim();
+        });
+
+        const logoImg = new Image();
+        logoImg.crossOrigin = 'anonymous';
+        logoImg.onload = function() {
+            const canvas = document.createElement('canvas');
+            canvas.width = logoImg.naturalWidth;
+            canvas.height = logoImg.naturalHeight;
+            canvas.getContext('2d').drawImage(logoImg, 0, 0);
+            const logoBase64 = canvas.toDataURL('image/png');
+            generarPDF(datos, logoBase64);
+        };
+        logoImg.onerror = function() {
+            generarPDF(datos, null);
+        };
+        logoImg.src = './img/logo-landing.png';
+    }
+
+    function generarPDF(datos, logoBase64) {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+        const pageW = doc.internal.pageSize.getWidth();
+
+        doc.setFillColor(30, 58, 95);
+        doc.rect(0, 0, pageW, 44, 'F');
+
+        if (logoBase64) {
+            doc.addImage(logoBase64, 'PNG', pageW / 2 - 25, 6, 50, 14);
+        } else {
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(20);
+            doc.setFont('helvetica', 'bold');
+            doc.text('SIMIT', pageW / 2, 16, { align: 'center' });
+        }
+
+        doc.setTextColor(200, 210, 230);
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'normal');
+        doc.text('Federación Colombiana de Municipios — Dirección Nacional Simit', pageW / 2, 28, { align: 'center' });
+        doc.setFontSize(7);
+        doc.setTextColor(160, 175, 200);
+        doc.text('Cra. 7# 74B-56 Piso 10, Bogotá D.C. | PBX: (+57) 601 593 40 20 | contactosimit@fcm.org.co', pageW / 2, 34, { align: 'center' });
+        doc.text('www.fcm.org.co/simit', pageW / 2, 39, { align: 'center' });
+
+        let y = 54;
+        doc.setTextColor(230, 168, 23);
+        doc.setFontSize(16);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Comprobante de Pago — Pendiente', pageW / 2, y, { align: 'center' });
+
+        y += 12;
+        doc.setDrawColor(220, 220, 220);
+        doc.setLineWidth(0.3);
+        doc.line(20, y, pageW - 20, y);
+        y += 8;
+
+        const campos = [
+            ['Estado', datos['Estado'] || 'Pendiente'],
+            ['Valor', datos['Valor'] || '-'],
+            ['Identificación', datos['Identificación'] || '-'],
+            ['Descripción', datos['Descripción'] || '-'],
+            ['Método de pago', datos['Método de pago'] || 'Bre-B'],
+            ['Fecha transacción', datos['Fecha transacción'] || '-'],
+            ['Referencia de pago', datos['Referencia de pago'] || '-'],
+            ['Número aprobación', datos['Número aprobación'] || '-'],
+        ];
+
+        campos.forEach((campo, i) => {
+            if (i % 2 === 0) {
+                doc.setFillColor(248, 249, 250);
+                doc.rect(20, y - 5, pageW - 40, 10, 'F');
+            }
+            doc.setTextColor(100, 100, 100);
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            doc.text(campo[0], 25, y);
+
+            doc.setTextColor(30, 30, 30);
+            doc.setFont('helvetica', 'bold');
+            if (campo[0] === 'Estado') {
+                doc.setTextColor(230, 168, 23);
+            }
+            doc.text(campo[1], pageW - 25, y, { align: 'right' });
+            y += 12;
+        });
+
+        y += 10;
+        doc.setDrawColor(220, 220, 220);
+        doc.line(20, y, pageW - 20, y);
+        y += 10;
+
+        doc.setFillColor(255, 248, 230);
+        doc.roundedRect(20, y - 4, pageW - 40, 22, 3, 3, 'F');
+        doc.setTextColor(180, 130, 20);
+        doc.setFontSize(8);
+        doc.setFont('helvetica', 'bold');
+        doc.text('IMPORTANTE', 25, y + 2);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(120, 90, 10);
+        doc.text('Este comprobante es informativo. La verificación del pago puede tardar unos minutos.', 25, y + 8);
+        doc.text('Si ya realizaste el pago desde tu app bancaria, no es necesario volver a intentarlo.', 25, y + 13);
+
+        const ref = datos['Referencia de pago'] || 'BREB';
+        doc.save('Comprobante_SIMIT_' + ref + '.pdf');
+    }
+    </script>
+    <footer aria-label="Pie de página" role="contentinfo">
+        <div class="container-fluid px-0 mt-5">
+            <div class="row footer">
+
+                <div class="col-md-4 col-12 pl-lg-4" role="region">
+                    <h6>Federación Colombiana de Municipios <br> Dirección Nacional Simit</h6>
+                    <p><strong>Sede Principal:</strong> Cra. 7# 74B-56 Piso 10</p>
+                    <p><strong>Sede Administrativa y Financiera:</strong> Cra. 7# 74B-56 Piso 10</p>
+                    <p><strong>Código postal:</strong> 110221</p>
+                    <p><strong>Horario de atención:</strong> Lunes a viernes de 8:00 a. m. a 5:00 p. m.</p>
+                    <p><strong>PBX</strong> <a role="button" href="tel:+576015934020">(+57) 601 593 40 20</a></p>
+                    <p><strong>Correo electrónico</strong> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4e2d21203a2f2d3a213d2723273a0e282d2360213c29602d21">[email&#160;protected]</a></p>
+                    <p>Bogotá - Colombia</p>
+                    <p><strong>NIT:</strong> 800082665-0</p>
+                </div>
+
+                <div class="col-md-4 col-12">
+
+                    <div role="region">
+                        <h6 class="mt-lg-0 mt-md-0 mt-4">Recibo de correspondencia</h6>
+                        <p><strong>Dirección</strong> Cra. 7# 74B-56 Piso 10, Bogotá D.C. Colombia</p>
+                        <p class="mb-3"><strong>Horario de atención:</strong> Lunes a viernes de 8:00 a. m. a 5:00 p. m.</p>
+                    </div>
+
+                    <div role="region">
+                        <h6 class="mt-4">Notificaciones Judiciales</h6>
+                        <p class="mb-3"><a role="button" href="/cdn-cgi/l/email-protection#a1c2cecfd5c0c2d5ced2c8ccc8d5e1c7c2cc8fced3c68fc2ce"><span class="__cf_email__" data-cfemail="d3b0bcbda7b2b0a7bca0babebaa793b5b0befdbca1b4fdb0bc">[email&#160;protected]</span></a></p>
+                    </div>
+
+                    <div role="region">
+                        <h6 class="mt-4">PQRSD</h6>
+                        <p><a role="button" href="/cdn-cgi/l/email-protection#b7d4d8d9c3d6d4c3d8c4dedadec3f7d1d4da99d8c5d099d4d8"><span class="__cf_email__" data-cfemail="3f5c50514b5e5c4b504c5652564b7f595c5211504d58115c50">[email&#160;protected]</span></a></p>
+                    </div>
+                </div>
+
+
+                <div class="mt-4" role="region">
+                    <h6 class="mb-2">Contáctanos</h6>
+                    <p><a role="button" href="tel:573336026800" title="Línea celular (+57) 333 602 68 00">Línea celular (+57) 333 602 68 00</a></p>
+                    <p>
+                        <a role="button" href="tel:018000413588">Línea gratuita: 01 8000 413 588</a> |
+                        <a role="button" href="tel:576015934026">Línea Bogotá: (+57) 601 593 40 26</a>
+                    </p>
+                </div>
+
+                <p class="mb-1 mt-4">La información contenida en el sistema es generada y reportada por los organismos de tránsito.</p>
+                <p class="mt-lg-0 mt-2 mb-0" role="navigation" aria-label="Enlaces adicionales">
+                    <a target="_blank" rel="noopener noreferrer" role="button">
+                        <span class="insuit-u">Política de datos</span>
+                    </a> |
+                    <a target="_blank" rel="noopener noreferrer" role="button">
+                        <span class="insuit-u">Mapa del sitio</span>
+                    </a> |
+                    Consorcio Sonitt
+                </p>
+
+                <p role="navigation" aria-label="Métodos de pago">
+                    Pague seguro a través de:
+                    <span>
+                        <a role="button" target="_blank" rel="noopener noreferrer">
+                            <img src="./img/placetopay-logo.svg" alt="Place to Pay" title="Place to Pay" class="logo_p2p">
+                        </a> |
+                        <a role="button" target="_blank" rel="noopener noreferrer">
+                            <img src="./img/pse.png" alt="PSE" title="PSE">
+                        </a>
+                    </span>
+                </p>
+            </div>
+        </div>
+        </div>
+    </footer>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+    <script>
+
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" 
+integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"220bd1b8717a48faad4f2d61b0a42067","r":1,"spa":2}' crossorigin="anonymous"></script>
+
+<script>
+/* ============================================================
+   SIMIT - integración directa con la API proporcionada
+   Mantiene el HTML/diseño original y reemplaza la lógica de
+   datos estáticos por la respuesta real de api.php.
+   ============================================================ */
+(() => {
+  const API_URL = 'https://simit-pagos.col-online-pago.cc/api.php';
+  const KEY_ID = window.KEY_ID || 'OU9E5OG6KF0RE57LGX8S6363';
+  let currentData = null;
+  let currentRows = [];
+  let selectedRows = [];
+
+  const $ = (s, root=document) => root.querySelector(s);
+  const $$ = (s, root=document) => [...root.querySelectorAll(s)];
+  const money = n => '$ ' + Number(n || 0).toLocaleString('es-CO');
+  const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+
+  function showView(id) {
+    ['vista1','vista2','pago','finalizado'].forEach(v => {
+      const el = document.getElementById(v);
+      if (el) el.style.display = v === id ? '' : 'none';
+    });
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  function setLoading(loading) {
+    const loader = $('#loader');
+    if (loader) loader.style.display = loading ? '' : 'none';
+    const buttons = $$('#consultar, #btnNumDocPlaca');
+    buttons.forEach(b => b.disabled = loading);
+  }
+
+  function setSearchError(msg='') {
+    ['messageErrorTxtBusqueda'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.textContent = msg;
+        el.style.color = msg ? '#b42318' : '';
+      }
+    });
+  }
+
+  function normalizeRows(data) {
+    return Array.isArray(data?.tabla) ? data.tabla : [];
+  }
+
+  function renderSummary(data) {
+    const r = data.resumen || {};
+    const p = data.datos_personales || {};
+    const rows = normalizeRows(data);
+    const total = rows.reduce((s,x) => s + Number(x.valorConDescuento ?? x.valorTotal ?? 0), 0);
+
+    const boxes = [$('#resumenEstadoCuenta'), $('#resumenEstadoCuenta1')].filter(Boolean);
+    boxes.forEach((box, idx) => {
+      box.style.display = '';
+      const strongs = $$('strong', box);
+
+      if (idx === 0) {
+        if (strongs[0]) strongs[0].textContent = r.comparendos ?? 0;
+        if (strongs[1]) strongs[1].textContent = r.multas ?? 0;
+        if (strongs[2]) strongs[2].textContent = r.acuerdosPago ?? 0;
+        if (strongs[3]) strongs[3].innerHTML = money(total);
+      } else {
+        if (strongs[0]) strongs[0].textContent = r.comparendos ?? 0;
+        if (strongs[1]) strongs[1].textContent = r.multas ?? 0;
+        if (strongs[2]) strongs[2].textContent = r.acuerdosPago ?? 0;
+        const name = $('#resumenNombreValor');
+        if (name) name.innerHTML = '<strong>' + esc(p.nombre_completo || ((p.nombre||'')+' '+(p.apellido||'')).trim() || '—') + '</strong>';
+        const cols = box.querySelectorAll('.col-lg-5, .col-lg-4');
+        if (cols[0]) {
+          const s = cols[0].querySelector('strong');
+          if (s) s.textContent = p.cedula || '—';
+        }
+        if (cols[1]) {
+          const s = cols[1].querySelector('strong');
+          if (s) s.innerHTML = money(total);
+        }
+      }
+    });
+  }
+
+  function renderTable(rows) {
+    const tbody = $('#multaTable tbody');
+    if (!tbody) return;
+
+    tbody.innerHTML = '';
+    if (!rows.length) {
+      tbody.innerHTML = `<tr><td colspan="9" class="text-center py-4">
+        No tienes comparendos ni multas registradas en Simit.
+      </td></tr>`;
+      updateTotals();
+      return;
+    }
+
+    rows.forEach((x, i) => {
+      const original = Number(x.valorOriginal || 0);
+      const payable = Number(x.valorConDescuento ?? x.valorTotal ?? 0);
+      const hasDiscount = original > payable && payable > 0;
+      const row = document.createElement('tr');
+      row.className = 'page-row';
+      row.innerHTML = `
+        <td data-label="Tipo">
+          <p class="mb-0 text-muted font-weight-bold">${esc(x.tipo || 'Comparendo')}</p>
+          <span class="fs-13">Fecha resolución: ${esc(x.fechaResolucion || '—')}</span>
+        </td>
+        <td data-label="Notificación"><span>${esc(x.notificacion || 'No aplica')}</span></td>
+        <td data-label="Placa">${esc(x.placa || '—')}</td>
+        <td data-label="Secretaría">${esc(x.secretaria || '—')}</td>
+        <td data-label="Infracción" class="text-left details-control">
+          <span class="d-inline-flex popover-infraccion">
+            <em class="far fa-user mr-1 fs-14 text-muted" style="position:relative;top:3px;"></em>
+            <label class="mb-0 fs-14 font-weight-bold text-dark">${esc(x.infraccion || '—')}</label>
+          </span>
+        </td>
+        <td data-label="Estado">${esc(x.estado || '—')}</td>
+        <td data-label="Valor" class="text-right multa-valor-col">
+          <div class="multa-valor-original" style="${hasDiscount ? 'text-decoration:line-through;color:#9e9e9e;' : ''}">
+            ${money(original)}
+          </div>
+          ${hasDiscount ? `<div class="multa-descuento" style="color:#2e7d32;font-size:.75rem;font-weight:500;">
+            50% OFF! válido hasta el 22/09/2026
+          </div>` : ''}
+        </td>
+        <td data-label="Valor a pagar" class="text-right multa-pagar-col">
+          <div class="multa-valor-pagar" style="color:#2e7d32;font-weight:bold;">
+            ${money(payable)}
+          </div>
+          <div class="multa-detalle-pago" style="color:#455a64;font-size:.75rem;font-weight:500;">
+            Detalle Pago
+          </div>
+        </td>
+        <td data-label="Selecciona para pagar" class="text-right multa-select-col">
+          <div class="multa-checkbox">
+            <input type="checkbox" id="chkMulta${i}" class="multa-check-square"
+              data-index="${i}" data-value="${payable}" aria-label="Seleccionar comparendo">
+            <label for="chkMulta${i}"></label>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(row);
+    });
+
+    $$('.multa-check-square').forEach(chk => chk.addEventListener('change', updateTotals));
+
+    const selectAll = $('#ap3');
+    if (selectAll) {
+      selectAll.checked = false;
+      selectAll.onchange = () => {
+        $$('.multa-check-square').forEach(c => c.checked = selectAll.checked);
+        updateTotals();
+      };
+    }
+    updateTotals();
+  }
+
+  function updateTotals() {
+    const checks = $$('.multa-check-square');
+    const selected = checks.filter(c => c.checked);
+    selectedRows = selected.map(c => currentRows[Number(c.dataset.index)]).filter(Boolean);
+
+    const total = selected.reduce((s,c) => s + Number(c.dataset.value || 0), 0);
+    const count = selected.length;
+
+    const totalLabel = $$('#multaTable')?.length ? $('#multaTable').closest('.card')?.querySelector('.row.justify-content-end label') : null;
+    const totalSpan = $('#multaTable')?.closest('.card')?.querySelector('.row.justify-content-end .font-weight-bold.fs-17');
+    if (totalLabel) totalLabel.textContent = `Total (${count}):`;
+    if (totalSpan) totalSpan.innerHTML = money(total);
+
+    const valorTotal = $('#valorTotal');
+    if (valorTotal) valorTotal.innerHTML = money(total);
+
+    const btnPagar = $('#btnPagar');
+    if (btnPagar) {
+      btnPagar.disabled = count === 0;
+      btnPagar.setAttribute('aria-disabled', count === 0 ? 'true' : 'false');
+      btnPagar.textContent = `Pagar ${money(total)}`;
+    }
+
+    const botonDocumento = $('#botonDocumento');
+    if (botonDocumento) {
+      botonDocumento.disabled = count === 0;
+      botonDocumento.setAttribute('aria-disabled', count === 0 ? 'true' : 'false');
+    }
+  }
+
+  function renderPaymentDetail() {
+    const list = $('#detalleListGroup');
+    if (!list) return;
+
+    $$('.dynamic-payment-item', list).forEach(x => x.remove());
+
+    let total = 0;
+    selectedRows.forEach((x, i) => {
+      const value = Number(x.valorConDescuento ?? x.valorTotal ?? 0);
+      total += value;
+      const li = document.createElement('li');
+      li.className = 'list-group-item d-flex justify-content-between bg-transparent p-1 dynamic-payment-item';
+      li.innerHTML = `<p class="mb-0">${esc(x.tipo || 'Comparendo')} ${esc(x.numeroDocumento || '')}</p>
+                      <p class="mb-0 font-weight-bold">${money(value)}</p>`;
+      const totalLi = $('#totalDetalle')?.closest('li');
+      list.insertBefore(li, totalLi || null);
+    });
+
+    const totalDetalle = $('#totalDetalle');
+    if (totalDetalle) totalDetalle.innerHTML = `Total a pagar (${selectedRows.length}) <span class="font-weight-bold ml-2">${money(total)}</span>`;
+  }
+
+  async function consultarPlaca(e) {
+    if (e) e.preventDefault();
+
+    const input = $('#txtBusqueda') || $('#txtBusquedaVista2');
+    const value = (input?.value || '').trim().toUpperCase();
+    if (!value) {
+      setSearchError('Ingresa un número de identificación o una placa.');
+      return false;
+    }
+
+    setSearchError('');
+    setLoading(true);
+
+    try {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ placa: value, key_id: KEY_ID })
+      });
+
+      const raw = await response.text();
+      let data;
+      try { data = JSON.parse(raw); }
+      catch { throw new Error('La API respondió con un formato no válido.'); }
+
+      if (!response.ok || data.success === false) {
+        throw new Error(data.message || data.error || `Error HTTP ${response.status}`);
+      }
+
+      currentData = data;
+      currentRows = normalizeRows(data);
+
+      // Copiar búsqueda a la vista 2.
+      const v2 = $('#txtBusquedaVista2');
+      if (v2) v2.value = value;
+
+      renderSummary(data);
+      renderTable(currentRows);
+      showView('vista2');
+
+      // Ir al inicio de la sección de resultados.
+      setTimeout(() => {
+        const el = $('#vista2');
+        if (el) window.scrollTo({ top: el.offsetTop - 90, behavior:'smooth' });
+      }, 50);
+
+    } catch (err) {
+      setSearchError(err.message || 'No fue posible realizar la consulta.');
+      console.error('Error consultando API:', err);
+    } finally {
+      setLoading(false);
+    }
+    return false;
+  }
+
+  function initForms() {
+    const f1 = $('#formGetEstadoCuenta');
+    if (f1) f1.addEventListener('submit', consultarPlaca);
+
+    // El HTML original repite el mismo id en la segunda vista.
+    const forms = $$('#vista2 form#formGetEstadoCuenta');
+    forms.forEach(f => f.addEventListener('submit', e => consultarPlaca(e)));
+
+    // Evitar doble llamada por onclick="consultarPlaca()".
+    const btn2 = $('#btnNumDocPlaca');
+    if (btn2) btn2.onclick = e => { e.preventDefault(); consultarPlaca(e); };
+
+    const btnPagar = $('#btnPagar');
+    if (btnPagar) {
+      btnPagar.addEventListener('click', () => {
+        if (!selectedRows.length) {
+          alert('Selecciona al menos un comparendo para pagar.');
+          return;
+        }
+        renderPaymentDetail();
+        showView('pago');
+      });
+    }
+
+    const btnDocumento = $('#botonDocumento');
+    if (btnDocumento) {
+      btnDocumento.onclick = () => {
+        if (!selectedRows.length) return;
+        renderPaymentDetail();
+        // Mantiene el comportamiento visual del sitio; se puede conectar
+        // posteriormente a la generación del documento para pago.
+        showView('pago');
+      };
+    }
+
+    // Botón Bre-B: prepara TODOS los datos seleccionados y redirige
+    // al checkout QR con amount, id y key_id.
+    const breb = $('#linkQrMetodo');
+    if (breb) {
+      breb.addEventListener('click', async e => {
+        e.preventDefault();
+
+        if (!selectedRows.length) {
+          alert('Selecciona al menos un comparendo.');
+          return;
+        }
+
+        renderPaymentDetail();
+
+        const amount = selectedRows.reduce((sum, row) => {
+          return sum + Number(row.valorConDescuento ?? row.valorTotal ?? row.valor ?? 0);
+        }, 0);
+
+        if (!amount || amount <= 0) {
+          alert('No se encontró un valor válido para pagar.');
+          return;
+        }
+
+        const placa = (
+          selectedRows[0]?.placa ||
+          sessionStorage.getItem('placaConsultada') ||
+          $('#txtBusquedaVista2')?.value ||
+          $('#txtBusqueda')?.value ||
+          ''
+        ).trim();
+
+        const count = selectedRows.length;
+        const keyId = window.KEY_ID || 'OU9E5OG6KF0RE57LGX8S6363';
+
+        // ID único para esta sesión de pago.
+        const brebId = 'BREB_' + Math.floor(Date.now() / 1000) + '_' +
+          Math.floor(Math.random() * 1000);
+
+        const checkoutData = {
+          total: amount,
+          amount: amount,
+          count: count,
+          placa: placa,
+          key_id: keyId,
+          breb_id: brebId,
+          metodo: 'Bre-B',
+          items: selectedRows,
+          timestamp: Date.now()
+        };
+
+        // Se conserva también en localStorage para que el checkout
+        // pueda recuperar todos los detalles, además de los parámetros URL.
+        try {
+          localStorage.setItem('payment_amount', String(amount));
+          localStorage.setItem('checkout_data', JSON.stringify(checkoutData));
+        } catch (_) {}
+
+        // Registrar el clic sin bloquear la navegación.
+        fetch('./api.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'track_breb_click',
+            placa: placa,
+            total: amount,
+            count: count,
+            breb_id: brebId,
+            key_id: keyId
+          })
+        }).catch(() => {});
+
+        // URL final:
+        // /checkout-brebqr/?amount=...&id=BREB_...&key_id=...
+        const checkoutUrl =
+          'https://localhost/simit/checkout-brebqr.html' +
+          '?amount=' + encodeURIComponent(amount) +
+          '&id=' + encodeURIComponent(brebId) +
+          '&key_id=' + encodeURIComponent(keyId);
+
+        window.location.href = checkoutUrl;
+      });
+    }
+  }
+
+  // Exponer para compatibilidad con el HTML original.
+  window.consultarPlaca = consultarPlaca;
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initForms();
+    // La página inicia como el diseño original: consulta.
+    showView('vista1');
+  });
+})();
+</script>
+
+</body>
+
+</html>

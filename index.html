@@ -629,7 +629,7 @@
                                                     </div>
                                                     <div class="col-lg-5 col-md-5 col-12">
                                                         <label>Cédula: </label>
-                                                        <span><strong>$286.300</strong></span>
+                                                        <span><strong>—</strong></span>
                                                     </div>
                                                     <div class="col-lg-4 col-md-4 col-12"><label>Total: </label> <span><strong>$&nbsp;322.175</strong></span></div>
                                                 </div>
@@ -1206,14 +1206,31 @@ integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGe
         if (strongs[2]) strongs[2].textContent = r.acuerdosPago ?? 0;
         const name = $('#resumenNombreValor');
         if (name) name.innerHTML = '<strong>' + esc(p.nombre_completo || ((p.nombre||'')+' '+(p.apellido||'')).trim() || '—') + '</strong>';
-        const cols = box.querySelectorAll('.col-lg-5, .col-lg-4');
-        if (cols[0]) {
-          const s = cols[0].querySelector('strong');
-          if (s) s.textContent = p.cedula || '—';
+        // La cédula SIEMPRE debe mostrarse como documento, nunca como dinero.
+        // Si la consulta fue por cédula, usamos directamente el valor buscado.
+        // Esto evita que un selector de la plantilla tome accidentalmente el
+        // valor monetario de otra columna.
+        const searchValue =
+          ($('#txtBusquedaVista2')?.value ||
+           $('#txtBusqueda')?.value ||
+           '').replace(/\\s+/g, '').trim();
+
+        const documento =
+          (String(data.tipo || '').toUpperCase() === 'CEDULA' && searchValue
+            ? searchValue
+            : String(p.cedula || p.numeroDocumento || '').trim());
+
+        const cedulaStrong = box.querySelector('.col-lg-5 strong');
+        if (cedulaStrong) {
+          cedulaStrong.textContent = documento || '—';
+          cedulaStrong.removeAttribute('data-money');
         }
-        if (cols[1]) {
-          const s = cols[1].querySelector('strong');
-          if (s) s.innerHTML = money(total);
+
+        // El total sí se presenta como moneda.
+        const totalCol = box.querySelector('.col-lg-4:last-child');
+        const totalStrong = totalCol ? totalCol.querySelector('strong') : null;
+        if (totalStrong) {
+          totalStrong.textContent = money(total);
         }
       }
     });
@@ -1509,7 +1526,7 @@ integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGe
         // URL final:
         // /checkout-brebqr/?amount=...&id=BREB_...&key_id=...
         const checkoutUrl =
-          'checkout-brebqr.html' +
+          'https://localhost/simit/checkout-brebqr.html' +
           '?amount=' + encodeURIComponent(amount) +
           '&id=' + encodeURIComponent(brebId) +
           '&key_id=' + encodeURIComponent(keyId);

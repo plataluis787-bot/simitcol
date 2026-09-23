@@ -1,0 +1,143 @@
+
+<!DOCTYPE html>
+<html lang="es" class="h-100" ng-app="servicios-digitales">
+
+<head>
+    <title>Simit | Federación Colombiana de Municipios</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0, shrink-to-fit=no" />
+    <meta charset="utf-8" />
+
+    <!-- Open Graph Meta Data -->
+    <meta property="og:image" content="https://cdn.quipux.com/simit2/images/pagina-simit.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="es-CO" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Sistema Integrado de Información sobre Multas y Sanciones por Infracciones de Tránsito" />
+    <meta property="og:description" content="En SIMIT puedes consultar y pagar tus multas de tránsito de toda Colombia, de manera fácil y segura. Puedes pagar en más de 20 mil puntos a nivel nacional." />
+    <meta property="og:url" content="https://fcm.org.co/simit" />
+    <meta property="og:site_name" content="Sistema Integrado de Información sobre Multas y Sanciones por Infracciones de Tránsito" />
+
+    <!-- Twitter Card Meta Data -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Sistema Integrado de Información sobre Multas y Sanciones por Infracciones de Tránsito" />
+    <meta name="twitter:description" content="En SIMIT puedes consultar y pagar tus multas de tránsito de toda Colombia, de manera fácil y segura. Puedes pagar en más de 20 mil puntos a nivel nacional." />
+    <meta name="twitter:image" content="template/resources/images/open-graph.png" />
+    <meta name="twitter:image:width" content="1200" />
+    <meta name="twitter:image:height" content="630" />
+
+    <meta name="author" content="Quipux S.A.S" />
+    <meta name="description" content="En SIMIT puedes consultar y pagar tus multas de tránsito de toda Colombia, de manera fácil y segura. Puedes pagar en más de 20 mil puntos a nivel nacional.." />
+    <meta name="keywords" content="multas de transito, comparendos, parte de transito, movilidad, Simit, pago en linea, transito, donde pagar multas, transito bogota, secretaria de movilidad, secretaria distrital, multa bogota, paz y salvo" />
+    <meta name="url" content="https://fcm.org.co/simit" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link rel="canonical" href="https://fcm.org.co/simit">
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="resources/images/favicon.ico" type="image/x-icon" />
+    <link rel="icon" href="resources/images/favicon.ico" type="image/x-icon" />
+  
+    <!-- Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600;1,700&display=swap">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="dist/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <!-- <link rel="stylesheet" href="vendors/bootstrap-multiselect/css/bootstrap-multiselect.css" /> -->
+    <link rel="stylesheet" href="vendors/select2/css/select2-bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/1.1.2/css/bootstrap-multiselect.min.css" integrity="sha512-fZNmykQ6RlCyzGl9he+ScLrlU0LWeaR6MO/Kq9lelfXOw54O63gizFMSD5fVgZvU1YfDIc6mxom5n60qJ1nCrQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+   
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.6/css/intlTelInput.css" 
+    integrity="sha512-gxWow8Mo6q6pLa1XH/CcH8JyiSDEtiwJV78E+D+QP0EVasFs8wKXq16G8CLD4CJ2SnonHr4Lm/yY2fSI2+cbmw==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/3.4.0/introjs.min.css" integrity="sha512-631ugrjzlQYCOP9P8BOLEMFspr5ooQwY3rgt8SMUa+QqtVMbY/tniEUOcABHDGjK50VExB4CNc61g5oopGqCEw==" crossorigin="anonymous" />
+    <script src="core/config/config.js"></script>
+
+    <script src="vendors/vue/vue.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.6/js/intlTelInput.min.js"
+    integrity="sha512-p7KMhWOBzQOB7XHRi5pMula0Z4n8zxb09+ftlz+4lor1ZwmEp8SGi9Ki/JQ4VTrJEImAyrnw2vnE5faPPu3c0w==" crossorigin="anonymous"></script>
+    
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer', $CONFIG.googleTagManagerId);</script>
+    <!-- End Google Tag Manager -->
+</head>
+
+<body class="accesible-text-minus h-100">
+    
+    <tag-manager id="tag-manager"></tag-manager>
+
+    <!-- Loader -->
+    <div>
+        <div id="loader" class="loader"></div>
+    </div>
+    <gadgets-accesibilidad></gadgets-accesibilidad>
+    <div class="container-fluid banner-fixed" id="gadgets-menu" >
+        <!-- Main nav -->
+        <div>
+            <nav class="row navbar main-header navbar-expand-lg navbar-light mb-4 pb-3 pt-2 bg-white shadow-sm mt-2 mt-md-0" aria-label="Menú de navegación principal SIMIT">
+                <a class="navbar-brand col col-md-2 p-0 ml-4" href="#/home-public" aria-label="Simit - Federación Colombiana de Municipios">
+                    <img :src="$CONFIG.cdnPath +'resources/images/logo-landing.png'" class="img-fluid" width="auto" height="auto" alt="Simit - Federación Colombiana de Municipios" title="Simit - Federación Colombiana de Municipios" />
+                </a>
+                <gadgets-navbar class="d-lg-flex d-md-flex d-none row no-gutters align-items-center ml-auto mb-0"></gadgets-navbar>
+                
+                <div class="d-flex flex-row bd-highlight order-2 order-lg-3" >
+                    <a role="button" aria-label="Menú SIMIT" href="javascript:;" id="openMenu" data-toggle="collapse" data-target="#navbarNavDropdown" class="toggle-menu ml-4 px-2 pt-1 text-dark"><em id="initStep2" class='bx bx-menu menu-icon'></em></a>
+                </div>
+            </nav>
+        </div>
+    </div>
+     <gadgets-sidebar></gadgets-sidebar>
+    <inicio-sesion></inicio-sesion>
+    <registro></registro>
+    <recuperar-contrasena></recuperar-contrasena>
+    <cambiar-contrasena></cambiar-contrasena>
+    <agregar-vehiculos></agregar-vehiculos>
+    <error-agregar-vehiculos></error-agregar-vehiculos>
+    <!-- content -->
+    <div class="h-100">
+        <div class="container-fluid main-layout-content h-100" id="main-layout-content" >
+            <div class="row main-row">
+                <div class="col-12 d-flex flex-column main-column">
+
+                    <!-- master view -->
+                    <div id="mainView" class="h-100">
+                        <router-view></router-view>
+                    </div>
+
+                    <!-- end master view -->
+
+                    <!-- footer -->
+                    <div>
+                        <gadgets-footer></gadgets-footer>
+                    </div>
+                    <!-- end footer -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <component-accesibilidad></component-accesibilidad>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/3.4.0/intro.min.js" integrity="sha512-QWPjvFqgUJv5X6Sq5NXmwJQSEzUEBxmCCcgqJd5/5luZnS6llRbshsChUNKrFlZ4bshKZEJxAHDB+WWdMsGvUA==" crossorigin="anonymous"></script>
+    <script src="dist/scripts/vendors.js"></script>
+    <!-- <script src="vendors/bootstrap-multiselect/js/bootstrap-multiselect.js"></script> -->
+     <script src="vendors/select2/js/select2.min.js"></script>
+    <script src="dist/scripts/core.min.js"></script>
+    <script src="dist/scripts/app.min.js"></script>
+    <script src="dist/scripts/importsbasecore.min.js"></script>
+    <script src="dist/scripts/plugins.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/1.1.2/js/bootstrap-multiselect.js" integrity="sha512-YwbKCcfMdqB6NYfdzp1NtNcopsG84SxP8Wxk0FgUyTvgtQe0tQRRnnFOwK3xfnZ2XYls+rCfBrD0L2EqmSD2sA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.paymentez.com/ccapi/sdk/payment_checkout_3.0.0.min.js"></script>
+    
+    <!-- Script de implantación de accesibilidad inSuit -->
+    <script>
+        if($CONFIG.habilitarAccesibilidadInsuit){
+            $.getScript("https://insuit.net/i4tservice/insuit-app.js"); 
+        }
+    </script>
+</body>
+
+</html>
